@@ -7,7 +7,7 @@ const LinkToIframeApp = () => {
   const [iframeLink, setIframeLink] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIframeLink('');
@@ -20,10 +20,10 @@ const LinkToIframeApp = () => {
     setIframeLink(link);
   };
 
-  const handleIframeLoad = (e) => {
+  const handleIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement>) => {
     // This will only work for same-origin iframes due to security restrictions
     try {
-      if (e.target.contentWindow.document.body.innerHTML === '') {
+      if (e.currentTarget.contentWindow?.document.body.innerHTML === '') {
         setError('The content could not be loaded. This might be due to CORS restrictions or the website not allowing embedding.');
       }
     } catch (err) {
@@ -39,7 +39,7 @@ const LinkToIframeApp = () => {
           <Input
             type="text"
             value={link}
-            onChange={(e) => setLink(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLink(e.target.value)}
             placeholder="Enter a URL for your problem (e.g., https://usaco.org)"
             className="flex-grow"
           />
@@ -47,7 +47,7 @@ const LinkToIframeApp = () => {
         </div>
       </form>
       {error && (
-        <p>Error</p>
+        <p className="text-red-500">{error}</p>
       )}
       {iframeLink && (
         <div className="border border-gray-300 rounded">
