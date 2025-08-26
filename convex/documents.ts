@@ -162,6 +162,7 @@ export const update = mutation({
     id: v.id("documents"),
     title: v.optional(v.string()),
     content: v.optional(v.string()),
+    notes: v.optional(v.string()),
     isPublished: v.optional(v.boolean())
   },
   handler: async (ctx, args) => {

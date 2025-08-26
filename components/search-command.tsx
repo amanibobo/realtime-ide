@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { File } from "lucide-react";
 import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import {
   CommandDialog,
   CommandEmpty,
@@ -54,10 +54,10 @@ export const SearchCommand = () => {
     return (
         <CommandDialog open={isOpen} onOpenChange={onClose}>
             <CommandInput 
-                placeholder={`Search ${user?.fullName}'s Realtime...`}
+                placeholder="Search spaces..."
             />
             <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandEmpty>No spaces found</CommandEmpty>
                 <CommandGroup heading="Spaces">
                     {documents?.map((document) => (
                         <CommandItem
@@ -65,8 +65,8 @@ export const SearchCommand = () => {
                             value={`${document._id}-${document.title}`}
                             onSelect={() => onSelect(document._id)}
                         >
-                            <File className="mr-2 h-4 w-4" />
-                            <span>{document.title}</span>
+                            <File className="mr-3 h-4 w-4 text-gray-400" />
+                            <span className="flex-1">{document.title}</span>
                         </CommandItem>
                     ))}
                 </CommandGroup>

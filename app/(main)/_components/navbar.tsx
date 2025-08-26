@@ -6,16 +6,6 @@ import { useQuery } from "convex/react";
 import { Coffee, CoffeeIcon, MenuIcon, Worm, WormIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Title } from "./title";
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
   
@@ -60,18 +50,7 @@ export const Navbar = ({
 
                 <div className="flex gap-2">
 
-                <Select onValueChange={onChangeLanguage} value={language}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a Language" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem value="java">java</SelectItem>
-          <SelectItem value="python">python</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-                <ModeToggle />
+                
                 </div>
                 </div>
             </nav>

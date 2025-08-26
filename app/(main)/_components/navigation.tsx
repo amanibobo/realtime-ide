@@ -110,9 +110,9 @@ export const Navigation = () => {
                 .then((documentId) => router.push(`/spaces/${documentId}`))
 
             toast.promise(promise, {
-                loading: "Creating a new space...",
-                success: "New space created!",
-                error: "Failed to generate a new space."
+                loading: "Creating space...",
+                success: "Space created",
+                error: "Failed to create space"
             });
         };
 
@@ -126,7 +126,7 @@ export const Navigation = () => {
         <>
         <aside
             ref={sidebarRef}
-            className={cn("group/sidebar h-screen bg-white dark:bg-muted border-r-[1px] overflow-y-auto relative flex w-60 flex-col z-[99999]",
+            className={cn("group/sidebar h-screen bg-gray-50 dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 overflow-y-auto relative flex w-60 flex-col z-[99999]",
                 isResetting && "transition-all ease-in-out duration-300",
                 isMobile && "w-0"
             )}
@@ -134,15 +134,20 @@ export const Navigation = () => {
             <div
                 onClick={collapse}
                 role="button"
-                className={cn("h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover-bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
+                className={cn("h-6 w-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-800 absolute top-4 right-3 opacity-0 group-hover/sidebar:opacity-100 transition-all",
                     isMobile && "opacity-100"
                 )}
             >
                 <ChevronsLeft className="h-6 w-6"/>
             </div>
-            <div>
-                
-               <UserItem />
+            
+            {/* User Section */}
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+                <UserItem />
+            </div>
+
+            {/* Navigation Items */}
+            <div className="p-4 space-y-1">
                <Item onClick={Homer} label="Home" icon={HomeIcon} butter={false} />
                <Item 
                 label="Search"
@@ -151,19 +156,23 @@ export const Navigation = () => {
                 onClick={search.onOpen}
                 butter={false}
                />
-               <Item onClick={handleCreate} label="Add New" icon={PlusCircle} butter={false} />
+               <Item onClick={handleCreate} label="New Space" icon={Plus} butter={false} />
             </div>
-            <div>
 
-
-            </div>
-            <div className="mt-4">
-            <span className="truncate text-gray-600 font-semibold dark:text-white pl-4">
-            Code Spaces
-            </span>
+            {/* Spaces Section */}
+            <div className="flex-1 px-4">
+                <div className="mb-3">
+                    <span className="text-xs font-light text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                        Spaces
+                    </span>
+                </div>
                 <DocumentList />
+            </div>
+
+            {/* Trash Section */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
                 <Popover>
-                    <PopoverTrigger className="w-full mt-4">
+                    <PopoverTrigger className="w-full">
                         <Item label="Trash" icon={Trash} />
                     </PopoverTrigger>
                     <PopoverContent 
@@ -173,8 +182,10 @@ export const Navigation = () => {
                     </PopoverContent>
                 </Popover>
             </div>
+
+            {/* Resize Handle */}
             <div onMouseDown={handleMouseDown} onClick={resetWidth} className="opacity-0 group-hover/sidebar:opacity-100
-            transition cursor-ew-resize absolute h-screen w-1 bg-primary/10
+            transition cursor-ew-resize absolute h-screen w-1 bg-gray-300 dark:bg-gray-700
             right-0 top-0"/>  
         </aside>
         <div
@@ -193,10 +204,10 @@ export const Navigation = () => {
                 />
             ) : (
             <nav className="bg-transparent px-3 py-2 w-full">
-                {isCollapsed && <MenuIcon role="button" onClick={resetWidth} className="h-6 w-6 text-muted-foreground" />}
+                {isCollapsed && <MenuIcon role="button" onClick={resetWidth} className="h-6 w-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />}
             </nav>
             )}
         </div>
         </>
-    )
-}
+    );
+};

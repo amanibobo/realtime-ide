@@ -1,14 +1,13 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Heading } from "./_components/heading";
 
 const MarketingPage = () => {
   return (
-    <div className="min-h-full flex flex-col">
-     <div className="flex flex-col items-center justify-center
-     md:justify-start text-center gap-y-8 flex-1 px-6 pb-10">
-      <Heading /> 
-     </div>
+    <div className="min-h-screen bg-white dark:bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          <Heading />
+        </div>
+      </div>
     </div>
   );
 }

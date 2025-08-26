@@ -26,10 +26,10 @@ export const ConfirmModal = ({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                       Are you sure? 
+                       Delete space
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone.
+                        This space will be moved to trash and can be restored later.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -37,7 +37,7 @@ export const ConfirmModal = ({
                         Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction onClick={handleConfirm}>
-                        Confirm
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

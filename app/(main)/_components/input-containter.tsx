@@ -5,16 +5,19 @@ import { api } from "@/convex/_generated/api";
 import Editor from "@monaco-editor/react";
 import { useMutation } from "convex/react";
 import { useState } from "react";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface InputProps {
   onChange: (value: string) => void;
   initialContent?: string;
+  documentId?: Id<"documents">;
   editable?: boolean;
 };
 
 export const InputCon = ({
   onChange,
   initialContent = "",
+  documentId,
   editable = true
 }: InputProps) => {
   const [content, setContent] = useState(initialContent);
@@ -26,13 +29,15 @@ export const InputCon = ({
       setContent(value);
       onChange(value);
 
-      // Save content to Convex database
-      update({
-        id: initialContent._id, // Assuming initialContent is an object with an _id field
-        content: value,
-      })
-        .then(() => console.log("Content updated successfully"))
-        .catch((error) => console.error("Error updating content:", error));
+      // Save content to Convex database if documentId is provided
+      if (documentId) {
+        update({
+          id: documentId,
+          content: value,
+        })
+          .then(() => console.log("Content updated successfully"))
+          .catch((error) => console.error("Error updating content:", error));
+      }
     }
   };
 

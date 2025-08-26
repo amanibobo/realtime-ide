@@ -5,9 +5,14 @@ import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 import { Navigation } from "./_components/navigation";
 import { SearchCommand } from "@/components/search-command";
+import { useEffect } from "react";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
+
+  useEffect(() => {
+    console.log("Main layout auth state:", { isAuthenticated, isLoading });
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
     return (
