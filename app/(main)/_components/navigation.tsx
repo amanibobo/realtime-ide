@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { ChevronsLeft, HomeIcon, MenuIcon, Plus, PlusCircle, Search, Trash } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState, useCallback } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { UserItem } from "./user-item";
 import { useMutation } from "convex/react";
@@ -35,6 +35,30 @@ export const Navigation = () => {
     const navbarRef = useRef<ElementRef<"div">>(null);
     const [isResetting, setIsResetting] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(isMobile);
+
+    const resetWidth = useCallback(() => {
+        if (sidebarRef.current && navbarRef.current) {
+            setIsCollapsed(false);
+            setIsResetting(true);
+
+            sidebarRef.current.style.width = isMobile ? "100%" : "240px";
+            navbarRef.current.style.setProperty("width", isMobile ? "0" : "calc(100% - 240px)");
+            navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
+            setTimeout(() => setIsResetting(false), 300);
+        }
+    }, [isMobile]);
+
+    const collapse = () => {
+        if (sidebarRef.current && navbarRef.current) {
+            setIsCollapsed(true);
+            setIsResetting(true);
+
+            sidebarRef.current.style.width = "0";
+            navbarRef.current.style.setProperty("width", "100%");
+            navbarRef.current.style.setProperty("left", "0");
+            setTimeout(() => setIsResetting(false), 300);
+        }
+    };
 
     useEffect(() => {
         if (isMobile) {
@@ -75,35 +99,11 @@ export const Navigation = () => {
         }
     };
 
-        const handleMouseUp = () => {
-            isResizingRef.current = false;
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleMouseUp);
-        };
-
-        const resetWidth = useCallback(() => {
-            if (sidebarRef.current && navbarRef.current) {
-                setIsCollapsed(false);
-                setIsResetting(true);
-
-                sidebarRef.current.style.width = isMobile ? "100%" : "240px";
-                navbarRef.current.style.setProperty("width", isMobile ? "0" : "calc(100% - 240px)");
-                navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
-                setTimeout(() => setIsResetting(false), 300);
-            }
-        }, [isMobile]);
-
-        const collapse = () => {
-            if (sidebarRef.current && navbarRef.current) {
-                setIsCollapsed(true);
-                setIsResetting(true);
-
-                sidebarRef.current.style.width = "0";
-                navbarRef.current.style.setProperty("width", "100%");
-                navbarRef.current.style.setProperty("left", "0");
-                setTimeout(() => setIsResetting(false), 300);
-            }
-        }
+    const handleMouseUp = () => {
+        isResizingRef.current = false;
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
     
         const handleCreate = () => {
             const promise = create({ title: "Untitled Space" })
