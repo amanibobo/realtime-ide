@@ -107,8 +107,189 @@ export const IDE = ({
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [input, setInput] = useState("");
 
+  // Generate language-specific template
+  const getLanguageTemplate = (language: any) => {
+    const templates: { [key: string]: string } = {
+      python: `# Your function here
+def yourFunction(input_data):
+    # Implement your solution here
+    return "result"
+
+# Test the function and show the result
+test_input = input().strip()
+result = yourFunction(test_input)
+print(result)  # This will show the actual return value`,
+
+      javascript: `// Your function here
+function yourFunction(inputData) {
+    // Implement your solution here
+    return "result";
+}
+
+// Test the function and show the result
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.question('', (testInput) => {
+    const result = yourFunction(testInput.trim());
+    console.log(result); // This will show the actual return value
+    rl.close();
+});`,
+
+      java: `import java.util.*;
+
+// Your function here
+class Solution {
+    public boolean yourFunction(String inputData) {
+        // Implement your solution here
+        return true; // Change return type as needed
+    }
+}
+
+// Test the function and show the result
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String testInput = sc.nextLine().trim();
+        Solution solution = new Solution();
+        boolean result = solution.yourFunction(testInput);
+        System.out.println(result); // This will show the actual return value
+    }
+}`,
+
+      cpp: `#include <iostream>
+#include <string>
+using namespace std;
+
+// Your function here
+string yourFunction(string inputData) {
+    // Implement your solution here
+    return "result";
+}
+
+// Test the function and show the result
+int main() {
+    string testInput;
+    getline(cin, testInput);
+    string result = yourFunction(testInput);
+    cout << result << endl; // This will show the actual return value
+    return 0;
+}`,
+
+      c: `#include <stdio.h>
+#include <string.h>
+
+// Your function here
+char* yourFunction(char* inputData) {
+    // Implement your solution here
+    return "result";
+}
+
+// Test the function and show the result
+int main() {
+    char testInput[1000];
+    fgets(testInput, sizeof(testInput), stdin);
+    testInput[strcspn(testInput, "\\n")] = 0; // Remove newline
+    char* result = yourFunction(testInput);
+    printf("%s\\n", result); // This will show the actual return value
+    return 0;
+}`,
+
+      csharp: `using System;
+
+// Your function here
+public class Solution {
+    public string YourFunction(string inputData) {
+        // Implement your solution here
+        return "result";
+    }
+}
+
+// Test the function and show the result
+class Program {
+    static void Main(string[] args) {
+        string testInput = Console.ReadLine().Trim();
+        Solution solution = new Solution();
+        string result = solution.YourFunction(testInput);
+        Console.WriteLine(result); // This will show the actual return value
+    }
+}`,
+
+      typescript: `// Your function here
+function yourFunction(inputData: string): string {
+    // Implement your solution here
+    return "result";
+}
+
+// Test the function and show the result
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.question('', (testInput: string) => {
+    const result = yourFunction(testInput.trim());
+    console.log(result); // This will show the actual return value
+    rl.close();
+});`,
+
+      rust: `use std::io;
+
+// Your function here
+fn your_function(input_data: &str) -> String {
+    // Implement your solution here
+    return "result".to_string();
+}
+
+// Test the function and show the result
+fn main() {
+    let mut test_input = String::new();
+    io::stdin().read_line(&mut test_input).unwrap();
+    let test_input = test_input.trim();
+    let result = your_function(test_input);
+    println!("{}", result); // This will show the actual return value
+}`,
+
+      kotlin: `import java.util.*
+
+// Your function here
+fun yourFunction(inputData: String): String {
+    // Implement your solution here
+    return "result"
+}
+
+// Test the function and show the result
+fun main() {
+    val scanner = Scanner(System.in)
+    val testInput = scanner.nextLine().trim()
+    val result = yourFunction(testInput)
+    println(result) // This will show the actual return value
+}`,
+
+      ruby: `# Your function here
+def your_function(input_data)
+    # Implement your solution here
+    return "result"
+end
+
+# Test the function and show the result
+test_input = gets.chomp
+result = your_function(test_input)
+puts result # This will show the actual return value`
+    };
+
+    return templates[language.value] || templates.python;
+  };
+
   const update = useMutation(api.documents.update);
-  const hasAPIKey = Boolean(process.env.NEXT_PUBLIC_RAPIDAPI_KEY && process.env.NEXT_PUBLIC_RAPIDAPI_KEY !== 'your_rapidapi_key_here');
+  const hasAPIKey = Boolean(process.env.NEXT_PUBLIC_RAPIDAPI_KEY && 
+    process.env.NEXT_PUBLIC_RAPIDAPI_KEY !== 'your_rapidapi_key_here' && 
+    process.env.NEXT_PUBLIC_RAPIDAPI_KEY !== '' && 
+    process.env.NEXT_PUBLIC_RAPIDAPI_KEY.length > 0);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -129,7 +310,8 @@ export const IDE = ({
 
   const executeCode = async () => {
     if (!hasAPIKey) {
-      toast.error("Please configure your Judge0 API key first");
+      toast.error("Please configure your Judge0 API key first. Check your .env.local file.");
+      console.error("API Key not configured. Please set NEXT_PUBLIC_RAPIDAPI_KEY in your .env.local file");
       return;
     }
 
@@ -142,6 +324,15 @@ export const IDE = ({
     setExecutionResult(null);
 
     try {
+      // Debug logging
+      console.log("Submitting code:", {
+        language_id: selectedLanguage.id,
+        language_name: selectedLanguage.name,
+        content_length: content.length,
+        input_length: input.length,
+        has_api_key: !!process.env.NEXT_PUBLIC_RAPIDAPI_KEY
+      });
+
       // Submit code to Judge0
       const submitResponse = await fetch("https://judge0-ce.p.rapidapi.com/submissions", {
         method: "POST",
@@ -152,16 +343,19 @@ export const IDE = ({
         },
         body: JSON.stringify({
           language_id: selectedLanguage.id,
-          source_code: btoa(content), // Base64 encode
-          stdin: btoa(input), // Base64 encode input
+          source_code: content, // Send raw code, not base64 encoded
+          stdin: input || "", // Send raw input, not base64 encoded
         }),
       });
 
       if (!submitResponse.ok) {
-        throw new Error("Failed to submit code");
+        const errorText = await submitResponse.text();
+        console.error("Submit response error:", submitResponse.status, errorText);
+        throw new Error(`Failed to submit code: ${submitResponse.status} ${errorText}`);
       }
 
       const submitData = await submitResponse.json();
+      console.log("Submit response:", submitData);
       const submissionId = submitData.token;
 
       // Poll for results
@@ -177,10 +371,13 @@ export const IDE = ({
         );
 
         if (!resultResponse.ok) {
-          throw new Error("Failed to get execution result");
+          const errorText = await resultResponse.text();
+          console.error("Result response error:", resultResponse.status, errorText);
+          throw new Error(`Failed to get execution result: ${resultResponse.status} ${errorText}`);
         }
 
         const result = await resultResponse.json();
+        console.log("Execution result:", result);
 
         // If still processing, poll again
         if (result.status.id <= 2) {
@@ -188,12 +385,38 @@ export const IDE = ({
           return;
         }
 
-        // Decode base64 results
+        // Handle output safely - Judge0 might return plain text or base64
+        const safeDecode = (str: string | null | undefined): string | undefined => {
+          if (!str || str.trim() === '') return undefined;
+          
+          console.log("Processing output:", str);
+          
+          // Check if it looks like base64 (contains only base64 characters)
+          const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+          const isBase64 = base64Regex.test(str);
+          
+          if (isBase64) {
+            try {
+              console.log("Attempting base64 decode:", str);
+              const decoded = atob(str);
+              console.log("Base64 decoded result:", decoded);
+              return decoded;
+            } catch (error) {
+              console.error("Base64 decoding failed:", error);
+              // If base64 decoding fails, return the original string
+              return str;
+            }
+          } else {
+            console.log("Output appears to be plain text:", str);
+            return str;
+          }
+        };
+
         const decodedResult: ExecutionResult = {
           ...result,
-          stdout: result.stdout ? atob(result.stdout) : undefined,
-          stderr: result.stderr ? atob(result.stderr) : undefined,
-          compile_output: result.compile_output ? atob(result.compile_output) : undefined,
+          stdout: safeDecode(result.stdout),
+          stderr: safeDecode(result.stderr),
+          compile_output: safeDecode(result.compile_output),
         };
 
         setExecutionResult(decodedResult);
@@ -202,6 +425,12 @@ export const IDE = ({
         // Show toast based on result
         if (decodedResult.status.id === 3) {
           toast.success("Code executed successfully");
+        } else if (decodedResult.status.id === 4) {
+          toast.error(`Runtime Error (NZEC): Your program crashed or exited with an error. Check for infinite loops, missing input handling, or runtime errors.`);
+        } else if (decodedResult.status.id === 5) {
+          toast.error(`Time Limit Exceeded: Your program took too long to run. Check for infinite loops or inefficient algorithms.`);
+        } else if (decodedResult.status.id === 6) {
+          toast.error(`Memory Limit Exceeded: Your program used too much memory. Check for memory leaks or inefficient data structures.`);
         } else {
           toast.error(`Execution failed: ${decodedResult.status.description}`);
         }
@@ -237,7 +466,13 @@ export const IDE = ({
             value={selectedLanguage.value}
             onValueChange={(value) => {
               const language = LANGUAGES.find(lang => lang.value === value);
-              if (language) setSelectedLanguage(language);
+              if (language) {
+                setSelectedLanguage(language);
+                // Update content with language-specific template
+                const template = getLanguageTemplate(language);
+                setContent(template);
+                handleEditorChange(template);
+              }
             }}
           >
             <SelectTrigger className="w-40 border-gray-200 dark:border-gray-800 font-light rounded-none">
@@ -282,7 +517,7 @@ export const IDE = ({
           language={selectedLanguage.monaco}
           value={content}
           onChange={handleEditorChange}
-          defaultValue="# Welcome to your coding space!\n# Select a language and start coding"
+          defaultValue={getLanguageTemplate(LANGUAGES[0])}
           theme="vs-dark"
           options={{
             minimap: {
