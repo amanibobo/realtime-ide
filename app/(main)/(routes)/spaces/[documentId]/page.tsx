@@ -67,7 +67,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
             Space not found
           </h2>
           <p className="text-sm font-light text-gray-500 dark:text-gray-500">
-            This space may have been deleted or you don't have access to it.
+            This space may have been deleted or you don&apos;t have access to it.
           </p>
         </div>
       </div>

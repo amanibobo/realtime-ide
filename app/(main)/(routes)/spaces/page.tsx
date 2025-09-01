@@ -146,7 +146,7 @@ const SpacesPage = () => {
                     ) : searchQuery && filteredDocuments?.length === 0 ? (
                         <div className="text-center py-8">
                             <p className="text-gray-400 dark:text-gray-600 font-light">
-                                No spaces match "{searchQuery}"
+                                No spaces match &quot;{searchQuery}&quot;
                             </p>
                         </div>
                     ) : null}
