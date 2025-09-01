@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { FileText, Save, Clock } from 'lucide-react';
-import { debounce } from 'lodash';
 
 interface NotesProps {
   value?: string;
@@ -13,17 +12,26 @@ const Notes = ({ value = '', onChange, documentId }: NotesProps) => {
   const [content, setContent] = useState(value);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Debounced save function
   const debouncedSave = useCallback(
-    debounce((newContent: string) => {
-      setIsSaving(true);
-      onChange(newContent);
-      setTimeout(() => {
-        setIsSaving(false);
-        setLastSaved(new Date());
-      }, 500);
-    }, 1000),
+    (newContent: string) => {
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      
+      // Set new timeout
+      saveTimeoutRef.current = setTimeout(() => {
+        setIsSaving(true);
+        onChange(newContent);
+        setTimeout(() => {
+          setIsSaving(false);
+          setLastSaved(new Date());
+        }, 500);
+      }, 1000);
+    },
     [onChange]
   );
 

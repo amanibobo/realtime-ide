@@ -148,7 +148,7 @@ const LinkToIframeApp = () => {
               {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-950 z-10">
                   <div className="flex items-center gap-3">
-                    <Spinner className="w-5 h-5" />
+                    <Spinner size="lg" />
                     <span className="text-sm font-light text-gray-600 dark:text-gray-400">
                       Loading content...
                     </span>

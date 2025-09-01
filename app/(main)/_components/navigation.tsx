@@ -81,7 +81,7 @@ export const Navigation = () => {
             document.removeEventListener("mouseup", handleMouseUp);
         };
 
-        const resetWidth = () => {
+        const resetWidth = useCallback(() => {
             if (sidebarRef.current && navbarRef.current) {
                 setIsCollapsed(false);
                 setIsResetting(true);
@@ -91,7 +91,7 @@ export const Navigation = () => {
                 navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
                 setTimeout(() => setIsResetting(false), 300);
             }
-        };
+        }, [isMobile]);
 
         const collapse = () => {
             if (sidebarRef.current && navbarRef.current) {
